@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fast-dVLA: Accelerating Discrete Diffusion VLA to Real-Time Performance</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="#" class="nav-logo">Fast-dVLA</a>
+            <ul class="nav-links">
+                <li><a href="#abstract">Abstract</a></li>
+                <li><a href="#method">Method</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#demo">Demos</a></li>
+                <li><a href="#paper">Citation</a></li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    <span class="gradient-text">Fast-dVLA</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Accelerating Discrete Diffusion VLA to Real-Time Performance
+                </p>
+
+                <div class="hero-talk">
+                    <div class="hero-talk-header">
+                        <span class="hero-talk-badge">Talk Video</span>
+                        <p class="hero-talk-caption">A quick overview placed at the very beginning of the page.</p>
+                    </div>
+                    <div class="hero-talk-video">
+                        <video controls preload="metadata" playsinline>
+                            <source src="assets/demo/talk.mp4" type="video/mp4">
+                        </video>
+                    </div>
+                </div>
+
+                <div class="authors">
+                    <div class="author-list">
+                        <span class="author">Wenxuan Song<sup>1*</sup></span>
+                        <span class="author">Jiayi Chen<sup>1*</sup></span>
+                        <span class="author">Shuai Chen<sup>2,3*</sup></span>
+                        <span class="author">Jingbo Wang<sup>1</sup></span>
+                        <span class="author">Pengxiang Ding<sup>5,6</sup></span>
+                        <span class="author">Han Zhao<sup>5,6</sup></span>
+                        <span class="author">Yikai Qin<sup>1</sup></span>
+                        <span class="author">Xinhu Zheng<sup>1</sup></span>
+                        <span class="author">Donglin Wang<sup>2</sup></span>
+                        <span class="author">Yan Wang<sup>4&dagger;</sup></span>
+                        <span class="author">Haoang Li<sup>1&dagger;</sup></span>
+                    </div>
+                    <div class="affiliations">
+                        <span class="affil"><sup>1</sup>The Hong Kong University of Science and Technology (Guangzhou)</span>
+                        <span class="affil"><sup>2</sup>ShanghaiTech University</span>
+                        <span class="affil"><sup>3</sup>Shanghai Institute of Technical Physics, CAS</span>
+                        <span class="affil"><sup>4</sup>AIR, Tsinghua University</span>
+                        <span class="affil"><sup>5</sup>Westlake University</span>
+                        <span class="affil"><sup>6</sup>Zhejiang University</span>
+                    </div>
+                    <p class="email">* Equal Contribution | &dagger; Corresponding Authors</p>
+                    <p class="email">Correspondence: songwenxuan0115@gmail.com</p>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="fastd-arxiv.pdf" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-file-pdf"></i> Paper
+                    </a>
+                    <a href="#results" class="btn btn-secondary">
+                        <i class="fas fa-chart-line"></i> Results
+                    </a>
+                    <a href="#demo" class="btn btn-secondary">
+                        <i class="fas fa-video"></i> Demos
+                    </a>
+                    <a href="#real-world" class="btn btn-secondary">
+                        <i class="fas fa-robot"></i> Real-World
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-value">4.1x</span>
+                        <span class="stat-label">Max Speedup</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">30 Hz</span>
+                        <span class="stat-label">Real-World Control</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value">96.6%</span>
+                        <span class="stat-label">LIBERO Avg.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span class="scroll-text">Scroll to explore</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </header>
+
+    <section id="abstract" class="section abstract-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Abstract</h2>
+            </div>
+            <div class="abstract-content">
+                <div class="abstract-card">
+                    <div class="teaser-image">
+                        <img src="assets/figure/abs_teaser.png" alt="Fast-dVLA abstract teaser" class="method-image">
+                    </div>
+                    <p class="abstract-text">
+                        Pretrained vision-language-action models with discrete diffusion decoding offer strong multimodal alignment, but their inference speed remains far below the real-time requirements of physical robots. <strong>Fast-dVLA</strong> addresses this bottleneck by accelerating discrete diffusion VLA models to real-time performance through a block-wise diffusion strategy that combines KV-cache reuse with inter-block parallel decoding.
+                    </p>
+                    <p class="abstract-text">
+                        The key idea is to exploit the implicit left-to-right, block-wise decoding tendency inside bidirectional dVLAs, then redesign the model with block-wise attention and diffusion forcing so completed blocks can be cached while later blocks continue denoising in parallel. To train this efficiently, the paper introduces asymmetric distillation from finetuned bidirectional dVLAs and a pipelined decoding algorithm for inference.
+                    </p>
+                    <p class="abstract-text">
+                        Across LIBERO, CALVIN, and SimplerEnv, Fast-dVLA delivers <strong>2.8x-4.1x</strong> acceleration while preserving or slightly improving task performance. Real-world experiments further show robust execution across dynamic bimanual manipulation tasks with a stable <strong>30 Hz</strong> control frequency.
+                    </p>
+                </div>
+
+                <div class="key-features">
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <h3>Implicit AR Tendency</h3>
+                        <p>Reveals that bidirectional dVLAs still decode with a block-wise left-to-right tendency.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>KV Cache Reuse</h3>
+                        <p>Uses block-wise attention so completed blocks keep stable KV states across denoising steps.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h3>Parallel Block Denoising</h3>
+                        <p>Applies diffusion forcing to decode multiple action blocks with different noise levels in parallel.</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h3>Efficient Post-Training</h3>
+                        <p>Adopts asymmetric distillation and pipelined decoding to reach real-time robot control.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="method" class="section method-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Method</h2>
+                <p class="section-subtitle">Block-wise diffusion, asymmetric distillation, and pipelined decoding</p>
+            </div>
+
+            <div class="method-overview">
+                <div class="method-visual">
+                    <img src="assets/figure/teaser.png" alt="Fast-dVLA overview" class="method-image">
+                </div>
+
+                <div class="method-steps">
+                    <div class="step">
+                        <div class="step-number">01</div>
+                        <div class="step-content">
+                            <h3>Observe the Decoding Pattern</h3>
+                            <p>Even with bidirectional attention, representative dVLAs still denoise earlier action blocks before later ones, exposing an implicit block-wise autoregressive structure.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">02</div>
+                        <div class="step-content">
+                            <h3>Switch to Block-Wise Attention</h3>
+                            <p>Fast-dVLA constrains attention to causal action blocks so once a block is fully decoded, its KV cache remains unchanged and can be reused efficiently.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">03</div>
+                        <div class="step-content">
+                            <h3>Use Diffusion Forcing</h3>
+                            <p>Different blocks receive progressively increasing noise levels, allowing earlier blocks to finish first while later ones are refined in parallel without losing temporal consistency.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">04</div>
+                        <div class="step-content">
+                            <h3>Distill and Decode Efficiently</h3>
+                            <p>Asymmetric distillation transfers strong bidirectional teacher behavior into the block-wise student, and pipelined parallel decoding turns that structure into real-time inference.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="section results-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Results</h2>
+                <p class="section-subtitle">Consistent acceleration on LIBERO, CALVIN, SimplerEnv, and real-world manipulation</p>
+            </div>
+
+            <div class="result-block">
+                <div class="result-content">
+                    <div>
+                        <img src="assets/figure/libero.png" alt="Fast-dVLA results on LIBERO" class="result-image">
+                    </div>
+                    <div class="result-stats">
+                        <div class="result-highlight">
+                            <span class="result-value">96.6%</span>
+                            <span class="result-label">Average LIBERO success with DD-VLA + Fast-dVLA</span>
+                        </div>
+                        <div class="setup-info">
+                            <h4>LIBERO Highlights</h4>
+                            <ul>
+                                <li><i class="fas fa-tachometer-alt"></i> Up to 4.1x faster inference on representative dVLA bases.</li>
+                                <li><i class="fas fa-trophy"></i> Improves DD-VLA from 96.3% to 96.6% average success.</li>
+                                <li><i class="fas fa-stream"></i> Raises LIBERO-Long from 92.0% to 92.8%.</li>
+                                <li><i class="fas fa-balance-scale"></i> Remains competitive with frontier autoregressive and flow-matching VLAs.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-block">
+                <div class="result-content reverse">
+                    <div>
+                        <img src="assets/figure/calvin.png" alt="Fast-dVLA results on CALVIN" class="result-image">
+                    </div>
+                    <div class="result-stats">
+                        <div class="result-highlight">
+                            <span class="result-value">4.54</span>
+                            <span class="result-label">Average successful sub-tasks on CALVIN ABCD-D</span>
+                        </div>
+                        <div class="setup-info">
+                            <h4>CALVIN Highlights</h4>
+                            <ul>
+                                <li><i class="fas fa-link"></i> Fast-dVLA naturally extends to unified dVLAs such as UD-VLA.</li>
+                                <li><i class="fas fa-bolt"></i> Achieves 2.8x speedup over UD-VLA on long-horizon CALVIN.</li>
+                                <li><i class="fas fa-microchip"></i> Reaches 186.7 tokens/s while maintaining strong task completion.</li>
+                                <li><i class="fas fa-eye"></i> Preserves joint visual-foresight and action generation benefits.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-block">
+                <div class="result-content">
+                    <div>
+                        <img src="assets/figure/simpler.png" alt="Fast-dVLA results on SimplerEnv" class="result-image">
+                    </div>
+                    <div class="result-stats">
+                        <div class="result-highlight">
+                            <span class="result-value">366.4</span>
+                            <span class="result-label">Tokens/s on SimplerEnv with Fast-dVLA</span>
+                        </div>
+                        <div class="setup-info">
+                            <h4>SimplerEnv Highlights</h4>
+                            <ul>
+                                <li><i class="fas fa-robot"></i> Evaluated on high-fidelity WidowX tasks with varied viewpoints and appearance shifts.</li>
+                                <li><i class="fas fa-stopwatch"></i> Delivers the highest decoding speed among compared discrete-output VLAs.</li>
+                                <li><i class="fas fa-hand-paper"></i> Maintains strong success on spoon, carrot, block, and eggplant manipulation tasks.</li>
+                                <li><i class="fas fa-globe"></i> Outperforms continuous flow-matching baselines such as GR00T-N1 and pi0 in task success according to the paper.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="real-world" class="result-block real-world">
+                <h3 class="subsection-title">Real-World Experiments</h3>
+                <div class="real-world-content">
+                    <div class="setup-info">
+                        <h4>Experimental Setup</h4>
+                        <ul>
+                            <li><i class="fas fa-robot"></i> Bimanual AgileX platform with two 6-DOF arms and grippers.</li>
+                            <li><i class="fas fa-camera"></i> One high-mounted overhead camera plus two wrist-mounted cameras.</li>
+                            <li><i class="fas fa-database"></i> 100 expert demonstrations collected for each task.</li>
+                            <li><i class="fas fa-vial"></i> 40 evaluation trials per task with success and completion time recorded.</li>
+                            <li><i class="fas fa-wave-square"></i> Consistent 30 Hz execution frequency on the real robot.</li>
+                        </ul>
+                    </div>
+                    <div class="setup-info">
+                        <h4>Task Summary</h4>
+                        <ul>
+                            <li><i class="fas fa-box"></i> <strong>Conveyor Picking:</strong> picks moving blocks from a conveyor belt into a tray, nearly doubling prior efficiency.</li>
+                            <li><i class="fas fa-carrot"></i> <strong>Vegetables Stowing:</strong> sorts vegetables by text labels with competitive accuracy and shorter completion time.</li>
+                            <li><i class="fas fa-seedling"></i> <strong>Vegetables Retrieving:</strong> grasps target vegetables and places them into a pot under language instructions.</li>
+                            <li><i class="fas fa-check-circle"></i> Demonstrates precise instruction following together with real-time responsiveness.</li>
+                        </ul>
+                        <p class="abstract-text" style="margin-top: 20px; margin-bottom: 0;">
+                            The paper reports that Fast-dVLA keeps a stable 30 Hz control loop across all three real-world tasks, which prior baselines fail to maintain.
+                        </p>
+                    </div>
+                </div>
+                <div class="real-world-figure">
+                    <img src="assets/figure/realexp.png" alt="Real-world experiments figure" class="real-world-figure-embed">
+                </div>
+            </div>
+
+            <div id="demo" class="result-block demo-results">
+                <h3 class="subsection-title">Demos</h3>
+                <p style="font-size: 0.9em; color: #666; margin-bottom: 24px; margin-top: -16px;">Each pair shows a baseline video and the corresponding Fast-dVLA result using your updated local assets.</p>
+
+                <div class="task-demo-row">
+                    <div class="task-demo-header">
+                        <div class="task-icon"><i class="fas fa-industry"></i></div>
+                        <div class="task-title">
+                            <h4>Conveyor Picking</h4>
+                            <p class="task-instruction">Pick blocks from a moving conveyor belt and place them into the tray.</p>
+                        </div>
+                    </div>
+                    <div class="task-demo-videos">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Convey or Picking baseline.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Baseline</h4>
+                                <p>Reference behavior before Fast-dVLA acceleration.</p>
+                            </div>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Conveyor Picking.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Fast-dVLA</h4>
+                                <p>Faster execution for dynamic picking under real-time control.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-demo-row">
+                    <div class="task-demo-header">
+                        <div class="task-icon"><i class="fas fa-sort-alpha-down"></i></div>
+                        <div class="task-title">
+                            <h4>Vegetables Stowing</h4>
+                            <p class="task-instruction">Sort vegetables into the container according to their text labels.</p>
+                        </div>
+                    </div>
+                    <div class="task-demo-videos">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/sort_vegetable baseline.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Baseline</h4>
+                                <p>Slower execution with the original decoding pipeline.</p>
+                            </div>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/sort_vegetable.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Fast-dVLA</h4>
+                                <p>Maintains semantic sorting while reducing completion time.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-demo-row">
+                    <div class="task-demo-header">
+                        <div class="task-icon"><i class="fas fa-utensils"></i></div>
+                        <div class="task-title">
+                            <h4>Vegetables Retrieving</h4>
+                            <p class="task-instruction">Retrieve a target vegetable and place it into the pot based on language instructions.</p>
+                        </div>
+                    </div>
+                    <div class="task-demo-videos">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Vegetables Retrieving baseline.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Baseline</h4>
+                                <p>Reference retrieval behavior on the same task family.</p>
+                            </div>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Vegetables Retrieving.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Fast-dVLA</h4>
+                                <p>Shows efficient instruction-following retrieval in the real world.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="task-demo-row">
+                    <div class="task-demo-header">
+                        <div class="task-icon"><i class="fas fa-repeat"></i></div>
+                        <div class="task-title">
+                            <h4>Vegetables Retrieving Variant</h4>
+                            <p class="task-instruction">A second retrieval example showing another language-conditioned real-world rollout.</p>
+                        </div>
+                    </div>
+                    <div class="task-demo-videos">
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Vegetables Retrieving2 baseline.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Baseline</h4>
+                                <p>Additional comparison clip for the retrieval setting.</p>
+                            </div>
+                        </div>
+                        <div class="video-card">
+                            <div class="video-wrapper">
+                                <video controls preload="metadata">
+                                    <source src="assets/demo/Vegetables Retrieving2.mp4" type="video/mp4">
+                                </video>
+                            </div>
+                            <div class="video-info">
+                                <h4>Fast-dVLA</h4>
+                                <p>Second Fast-dVLA retrieval rollout from your local demo assets.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="paper" class="section paper-section">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Citation</h2>
+            </div>
+            <div class="paper-content">
+                <div class="paper-info">
+                    <div class="citation-box">
+                        <pre><code>@misc{song2026fastdvla,
+  title        = {Fast-dVLA: Accelerating Discrete Diffusion VLA to Real-Time Performance},
+  author       = {Wenxuan Song and Jiayi Chen and Shuai Chen and Jingbo Wang and Pengxiang Ding and Han Zhao and Yikai Qin and Xinhu Zheng and Donglin Wang and Yan Wang and Haoang Li},
+  year         = {2026},
+  note         = {Preprint},
+  howpublished = {Project PDF: fastd-arxiv.pdf}
+}</code></pre>
+                        <button class="copy-btn" onclick="copyCitation()">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span>Fast-dVLA</span>
+                </div>
+                <p class="footer-text">
+                    HKUST (Guangzhou), ShanghaiTech, AIR Tsinghua, Westlake, and Zhejiang University
+                </p>
+                <p class="footer-copy">
+                    &copy; 2026 Fast-dVLA. All rights reserved.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
